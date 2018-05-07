@@ -4,10 +4,15 @@
 # quotebook 웹링크
 http://quotebook.ga
 
+# 테스트 계정
+* 아이디 : catgirl@naver.com
+* 비밀번호 : 1234567
+
 # 개발환경
 * JSP = HTML+ CSS3 + JQUERY 
 * MySQL
 * Spring + Mybatis
+
 
 # 주요기능
 > ## 기능1 문장등록
