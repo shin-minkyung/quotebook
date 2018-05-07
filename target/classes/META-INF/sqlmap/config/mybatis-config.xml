@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias type="com.smk.quotebook.model.Admin" alias="Admin"/>
+		<typeAlias type="com.smk.quotebook.model.Members" alias="Members"/>
+		<typeAlias type="com.smk.quotebook.model.MyQBook" alias="MyQBook"/>
+		<typeAlias type="com.smk.quotebook.model.PublicQBook" alias="PublicQBook"/>
+		<typeAlias type="com.smk.quotebook.model.Langlist" alias="Langlist"/>
+		<typeAlias type="com.smk.quotebook.model.PBComment" alias="PBComment"/>
+		<typeAlias type="com.smk.quotebook.model.Rankings" alias="Rankings"/>
+		<typeAlias type="com.smk.quotebook.model.Message" alias="Message"/>
+		<typeAlias type="com.smk.quotebook.model.Alarm" alias="Alarm"/>
+		<typeAlias type="com.smk.quotebook.model.WordCard" alias="WordCard"/>
+	</typeAliases>
+ 	<mappers>
+		<mapper resource="META-INF/sqlmap/mappers/Admin.xml"/>	
+		<mapper resource="META-INF/sqlmap/mappers/Members.xml"/>
+		<mapper resource="META-INF/sqlmap/mappers/MyQBook.xml"/>		
+		<mapper resource="META-INF/sqlmap/mappers/PublicQBook.xml"/>
+		<mapper resource="META-INF/sqlmap/mappers/Langlist.xml"/>
+		<mapper resource="META-INF/sqlmap/mappers/PBComment.xml"/>
+		<mapper resource="META-INF/sqlmap/mappers/Rankings.xml"/>
+		<mapper resource="META-INF/sqlmap/mappers/Message.xml"/>
+		<mapper resource="META-INF/sqlmap/mappers/Alarm.xml"/>
+	</mappers>
+</configuration>

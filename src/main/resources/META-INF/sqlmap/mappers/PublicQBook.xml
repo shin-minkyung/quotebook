@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PublicQBook">
+<insert id="insertPBook" parameterType="PublicQBook">
+	INSERT INTO PUBLICBOOK VALUES(last_insert_id(PBID),#{mqid},#{mid}, #{mqquote}, #{mqlang},#{stitle},#{smaker}, #{surl}, #{syear}, #{pbtitle}, #{pbcontent}, default, default, default, default)	
+</insert>
+<select id="contentView1" parameterType="int" resultType="PublicQBook">
+	SELECT PB.*,MNAME,MPHOTO 
+		FROM PUBLICBOOK PB, MEMBERS M 
+			WHERE PB.MID=M.MID AND PBID=#{pbid}
+</select>
+<select id="contentView2" parameterType="int" resultType="PublicQBook">
+	SELECT PBID, PB.MQID ,MQQUOTE, MQLANG, MQWHY, STITLE, SMAKER, SURL FROM PUBLICBOOK PB, MYQBOOK MQ, SOURCE_INFO S WHERE PB.MQID=MQ.MQID AND MQ.MQID=S.MQID AND PBID=#{pbid}
+</select>
+<select id="pBookUphit" parameterType="int">
+	UPDATE PUBLICBOOK SET PBHIT = PBHIT+1 WHERE PBID=#{pbid}
+</select>
+<select id="getMaxPBID" resultType="int">
+	SELECT MAX(PBID) FROM PUBLICBOOK
+</select>
+<select id="getPBlist" resultType="PublicQBook">
+	select PB.*,MNAME, MPHOTO, L.MLEVEL
+	from PUBLICBOOK PB, MEMBERS M, MLEVEL L
+		where PB.MID=M.MID AND MQLANG=#{mqlang} AND MPOINT BETWEEN MLLOWP AND MLHIGHP AND PBDEL=0
+			order by PBDATE desc
+				limit #{startRow},#{pageSize};
+</select>
+<select id="getCntEachlangPB" parameterType="String" resultType="int">
+SELECT COUNT(*) FROM PUBLICBOOK PB WHERE MQLANG=#{mqlang} AND PBDEL=0
+</select>
+<select id="mostRead3list" parameterType="PublicQBook" resultType="PublicQBook">
+	 SELECT PBID, PBTITLE, MQLANG, MQQUOTE, PBDATE, PBHIT, PBDEL, MNAME, MPHOTO, L.MLEVEL
+		FROM PUBLICBOOK PB, MEMBERS M, MLEVEL L
+			WHERE PB.MID=M.MID AND MQLANG=#{mqlang} AND MPOINT BETWEEN MLLOWP AND MLHIGHP AND PBDEL=0
+				ORDER BY PBHIT DESC
+					LIMIT #{startRow},#{pageSize}
+</select>
+<select id="mostRecent3list"  parameterType="PublicQBook" resultType="PublicQBook">
+	SELECT PBID, PBTITLE, MQLANG, MQQUOTE, PBDATE, PBHIT, PBDEL, MNAME, MPHOTO, L.MLEVEL 
+		FROM PUBLICBOOK PB, MEMBERS M, MLEVEL L
+			WHERE PB.MID=M.MID AND MQLANG=#{mqlang} AND MPOINT BETWEEN MLLOWP AND MLHIGHP AND PBDEL=0
+				ORDER BY PBDATE DESC
+					LIMIT #{startRow},#{pageSize}
+</select>
+<select id="getmyPBCnt" parameterType="String" resultType="int">
+	SELECT COUNT(*) FROM PUBLICBOOK WHERE MID=#{mid} and PBDEL=0
+</select>
+<update id="like" parameterType="int">
+	UPDATE PUBLICBOOK SET PBLIKE=PBLIKE+1 WHERE PBID=#{pbid}
+</update>
+<update id="unlike" parameterType="int">
+	UPDATE PUBLICBOOK SET PBLIKE=PBLIKE-1 WHERE PBID=#{pbid}
+</update>
+<insert id="insertLike" parameterType="PublicQBook">
+	insert into PBLIKE values(#{pbid},#{mid})
+</insert>
+<delete id="deleteLike" parameterType="PublicQBook">
+	delete from PBLIKE where PBID=#{pbid} and LIKER=#{mid}
+</delete>
+<select id="ifliked" parameterType="PublicQBook" resultType="int">
+	select count(*) from PBLIKE where PBID=#{pbid} and LIKER=#{mid}
+</select>
+<select id="searchPBtitle" parameterType="PublicQBook" resultType="PublicQBook">
+	select PB.*, MNAME, MPHOTO
+		from PUBLICBOOK PB, MEMBERS M 
+	   		where pbtitle like concat('%',#{pbtitle},'%') and PB.MID=M.MID AND PBDEL=0
+	      		order by PBDATE limit #{startRow},#{pageSize}
+</select>
+<select id="searchPBtitleCnt" parameterType="String" resultType="int">
+	select count(*) from PUBLICBOOK where pbtitle like concat('%',#{keyword},'%') AND PBDEL=0
+</select>
+<select id="searchPBquote" parameterType="PublicQBook" resultType="PublicQBook">
+	select PB.*, MNAME, MPHOTO from PUBLICBOOK PB, MEMBERS M 
+	   where mqquote like concat('%',#{mqquote},'%') and PB.MID=M.MID AND PBDEL=0
+	      order by PBDATE limit #{startRow},#{pageSize}
+</select>
+<select id="searchPBquoteCnt" parameterType="String" resultType="int">
+	select count(*) from PUBLICBOOK where mqquote like concat('%',#{keyword},'%') AND PBDEL=0
+</select>
+<select id="searchPBcontent" parameterType="PublicQBook" resultType="PublicQBook">
+	select PB.*, MNAME, MPHOTO from PUBLICBOOK PB, MEMBERS M 
+	   where pbcontent like concat('%',#{pbcontent},'%') and PB.MID=M.MID AND PBDEL=0
+	      order by PBDATE limit #{startRow},#{pageSize}
+</select>
+<select id="searchPBcontentCnt" parameterType="String" resultType="int">
+	select count(*) from PUBLICBOOK where pbcontent like concat('%',#{keyword},'%') AND PBDEL=0
+</select>
+<select id="searchPBname" parameterType="PublicQBook" resultType="PublicQBook">
+	select PB.*, MNAME, MPHOTO from PUBLICBOOK PB, MEMBERS M 
+	   where mname=#{mname} and PB.MID=M.MID AND PBDEL=0
+	      order by PBDATE limit #{startRow},#{pageSize}
+</select>
+<select id="searchPBnameCnt" parameterType="String" resultType="int">
+	SELECT COUNT(*) FROM PUBLICBOOK PB, MEMBERS M where PB.MID=M.MID AND M.MNAME=#{mname} AND PBDEL=0
+</select>
+<select id="getmyPBlist" parameterType="PublicQBook" resultType="PublicQBook">
+	SELECT * FROM PUBLICBOOK WHERE MID=#{mid} order by pbdate desc limit #{startRow},5
+</select>
+<select id="getILikedlist" parameterType="PublicQBook" resultType="PublicQBook">
+	select * from PUBLICBOOK 
+		where pbid in (select pbid from PBLIKE where liker=#{mid}) AND PBDEL=0
+			order by PBDATE desc limit #{startRow},5
+</select>
+<update id="deletePB" parameterType="int">
+	update PUBLICBOOK set pbdel=1 where pbid=#{pbid}
+</update>
+<update id="modifyPB" parameterType="PublicQBook">
+	update PUBLICBOOK set PBTITLE=#{pbtitle}, PBCONTENT=#{pbcontent} where pbid=#{pbid}
+</update>
+</mapper>

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MyQBook">
+	<insert id="insertMyQBook" parameterType="MyQBook">
+		INSERT INTO MYQBOOK VALUES(last_insert_id(MQID), #{mid},#{mqquote},#{mqlang},#{mqmedia},#{mqwhy},default,
+		<if test="mqnote!=''">
+		#{mqnote},
+		</if>
+		<if test="mqnote==''">
+		NULL,
+		</if>
+		#{mqimportant})
+	</insert>
+	<insert id="insertSourceInfo" parameterType="MyQBook">
+		INSERT INTO SOURCE_INFO VALUES(last_insert_id(MQID), #{stitle},#{smaker},
+		<if test="surl!=''">
+		#{surl},
+		</if>
+		<if test="surl==''">
+		NULL,
+		</if>
+		<if test="syear!=''">
+		#{syear}
+		</if>
+		<if test="syear==''">
+		NULL
+		</if>		
+		)
+	</insert>
+	<insert id="insertVocanote" parameterType="MyQBook">
+		INSERT INTO VOCANOTE VALUES(last_insert_id(MQID),
+		<if test="word1!=''">
+		#{word1},
+		</if>
+		<if test="word1==''">
+		NULL,
+		</if>
+		<if test="meaning1!=''">
+		#{meaning1},
+		</if>
+		<if test="meaning1==''">
+		NULL,
+		</if>
+		<if test="word2!=''">
+		#{word2},
+		</if>
+		<if test="word2==''">
+		NULL,
+		</if>
+		<if test="meaning2!=''">
+		#{meaning2},
+		</if>
+		<if test="meaning2==''">
+		NULL,
+		</if>
+		<if test="word3!=''">
+		#{word3},
+		</if>
+		<if test="word3==''">
+		NULL,
+		</if>
+		<if test="meaning3!=''">
+		#{meaning3},
+		</if>
+		<if test="meaning3==''">
+		NULL,
+		</if>
+		<if test="phrase!=''">
+		#{phrase},
+		</if>
+		<if test="phrase==''">
+		NULL,
+		</if>
+		<if test="meaning4!=''">
+		#{meaning4}
+		</if>
+		<if test="meaning4==''">
+		NULL
+		</if>
+		)
+	</insert>
+	<select id="getMyQlist" parameterType="MyQBook" resultType="MyQBook">
+		SELECT * FROM MYQBOOK Q, SOURCE_INFO S, VOCANOTE V 
+			WHERE Q.MQID=S.MQID AND S.MQID=V.MQID AND MQLANG=#{mqlang} AND MID=#{mid}
+				ORDER BY MQDATE DESC
+              		LIMIT #{startRow}, #{pageSize}
+	</select>
+	<select id="getCntEachlang" parameterType="MyQBook" resultType="int">
+		SELECT COUNT(*) FROM MYQBOOK WHERE MQLANG=#{mqlang} AND MID=#{mid}
+	</select>
+	<select id="getWordCnt" parameterType="String" resultType="int">
+		SELECT CNT1+CNT2+CNT3 FROM 
+			(SELECT COUNT(*) CNT1 FROM MYQBOOK MQ, VOCANOTE V WHERE MQ.MQID=V.MQID AND MID=#{mid} AND WORD1 IS NOT NULL) A,
+			(SELECT COUNT(*) CNT2 FROM MYQBOOK MQ, VOCANOTE V WHERE MQ.MQID=V.MQID AND MID=#{mid} AND WORD2 IS NOT NULL) B,
+			(SELECT COUNT(*) CNT3 FROM MYQBOOK MQ, VOCANOTE V WHERE MQ.MQID=V.MQID AND MID=#{mid} AND WORD3 IS NOT NULL) C
+	</select>
+	<select id="getPhaseCnt" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM MYQBOOK MQ, VOCANOTE V WHERE MQ.MQID=V.MQID AND MID=#{mid} AND PHRASE IS NOT NULL
+	</select>
+	<select id="getmylanglist" parameterType="String" resultType="String">
+		SELECT MQLANG FROM MYQBOOK WHERE MID=#{mid} GROUP BY MQLANG
+	</select>
+	<select id="getQuote" parameterType="int" resultType="MyQBook">
+		SELECT * FROM MYQBOOK Q, SOURCE_INFO S, VOCANOTE V WHERE 
+			Q.MQID=S.MQID AND S.MQID=V.MQID AND Q.MQID=#{mqid}
+	</select>
+	<select id="getmyRecent10Q" parameterType="String" resultType="MyQBook">
+		SELECT MQQUOTE, MQDATE FROM MYQBOOK WHERE MID=#{mid} 
+			ORDER BY MQDATE DESC LIMIT 0,10
+	</select>
+	<select id="getmyQCnt" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM MYQBOOK MQ, SOURCE_INFO S, VOCANOTE V WHERE MID=#{mid} AND MQ.MQID=S.MQID AND S.MQID=V.MQID
+	</select>
+	<select id="getWords" parameterType="int" resultType="MyQBook">
+		SELECT WORD1, WORD2, WORD3 FROM VOCANOTE WHERE MQID=#{mqid}
+	</select>
+	<update id="modifyMeaning1" parameterType="MyQBook">
+		UPDATE VOCANOTE SET MEANING1=#{meaning1} WHERE MQID=#{mqid}
+	</update>
+	<update id="modifyMeaning2" parameterType="MyQBook">
+		UPDATE VOCANOTE SET MEANING2=#{meaning2} WHERE MQID=#{mqid}
+	</update>	
+	<update id="modifyMeaning3" parameterType="MyQBook">
+		UPDATE VOCANOTE SET MEANING3=#{meaning3} WHERE MQID=#{mqid}
+	</update>	
+	<update id="modifyMeaning4" parameterType="MyQBook">
+		UPDATE VOCANOTE SET MEANING4=#{meaning4} WHERE MQID=#{mqid}
+	</update>
+	<delete id="deleteQuote1" parameterType="int" >
+		DELETE FROM MYQBOOK WHERE MQID=#{mqid}	
+	</delete>		
+	<delete id="deleteQuote2" parameterType="int">
+		DELETE FROM SOURCE_INFO WHERE MQID=#{mqid}
+	</delete>
+	<delete id="deleteQuote3" parameterType="int">
+		DELETE FROM VOCANOTE WHERE MQID=#{mqid}
+	</delete>
+	<update id="addWord1" parameterType="MyQBook">
+		UPDATE VOCANOTE SET WORD1=#{word1}, MEANING1=#{meaning1} WHERE MQID=#{mqid}		
+	</update>
+	<update id="addWord2" parameterType="MyQBook">
+		UPDATE VOCANOTE SET WORD2=#{word2}, MEANING2=#{meaning2} WHERE MQID=#{mqid}		
+	</update>
+	<update id="addWord3" parameterType="MyQBook">
+		UPDATE VOCANOTE SET WORD3=#{word3}, MEANING3=#{meaning3} WHERE MQID=#{mqid}		
+	</update>
+	<select id="searchMBquote" parameterType="MyQBook" resultType="MyQBook">
+		SELECT * FROM MYQBOOK Q, SOURCE_INFO S, VOCANOTE V 
+			WHERE Q.MQID=S.MQID AND S.MQID=V.MQID AND MQQUOTE LIKE CONCAT('%',#{mqquote},'%') AND MID=#{mid} AND MQLANG=#{mqlang}
+				ORDER BY MQDATE DESC
+					LIMIT #{startRow},#{pageSize}
+	</select>
+	<select id="searchMBquoteCnt" parameterType="MyQBook" resultType="int">
+		SELECT COUNT(*) FROM MYQBOOK Q, SOURCE_INFO S, VOCANOTE V 
+			WHERE Q.MQID=S.MQID AND S.MQID=V.MQID  AND MQLANG=#{mqlang}
+				AND MQQUOTE LIKE CONCAT('%',#{mqquote},'%') AND MID=#{mid}
+	</select>
+	<select id="searchMBquotelanglist" parameterType="MyQBook" resultType="String">
+		SELECT MQLANG FROM MYQBOOK Q, SOURCE_INFO S, VOCANOTE V 
+			WHERE Q.MQID=S.MQID AND S.MQID=V.MQID AND MQQUOTE LIKE CONCAT('%',#{mqquote},'%') 
+    			AND MID=#{mid} 
+					group by MQLANG
+	</select>
+	<select id="searchMBmeaning" parameterType="MyQBook" resultType="MyQBook">
+		SELECT * FROM MYQBOOK Q, SOURCE_INFO S, VOCANOTE V 
+			WHERE Q.MQID=S.MQID AND S.MQID=V.MQID AND 
+      			(MEANING1 LIKE CONCAT('%',#{meaning1},'%') OR MEANING2 LIKE CONCAT('%',#{meaning1},'%') OR MEANING3 LIKE CONCAT('%',#{meaning1},'%') OR MEANING4 LIKE CONCAT('%',#{meaning1},'%')) 
+					AND MID=#{mid} AND MQLANG=#{mqlang}
+						ORDER BY MQDATE DESC
+							LIMIT #{startRow},#{pageSize}		
+	</select>
+	<select id="searchMBmeaningCnt" parameterType="MyQBook" resultType="int">
+		SELECT COUNT(*) FROM MYQBOOK Q, SOURCE_INFO S, VOCANOTE V 
+			WHERE Q.MQID=S.MQID AND S.MQID=V.MQID AND 
+    		  (MEANING1 LIKE CONCAT('%',#{meaning1},'%') OR MEANING2 LIKE CONCAT('%',#{meaning1},'%') OR MEANING3 LIKE CONCAT('%',#{meaning1},'%') OR MEANING4 LIKE CONCAT('%',#{meaning1},'%')) 
+					AND MID=#{mid} AND MQLANG=#{mqlang}
+	</select>
+	<select id="searchMBmeaninglanglist" parameterType="MyQBook" resultType="String">
+		SELECT MQLANG FROM MYQBOOK Q, SOURCE_INFO S, VOCANOTE V 
+			WHERE Q.MQID=S.MQID AND S.MQID=V.MQID AND 
+      			(MEANING1 LIKE CONCAT('%',#{meaning1},'%') OR MEANING2 LIKE CONCAT('%',#{meaning1},'%') OR MEANING3 LIKE CONCAT('%',#{meaning1},'%') OR MEANING4 LIKE CONCAT('%',#{meaning1},'%')) 
+					AND MID=#{mid} group by mqlang
+	</select>
+	<select id="getimportantQ" parameterType="MyQBook" resultType="MyQBook">
+		SELECT * FROM MYQBOOK Q, SOURCE_INFO S, VOCANOTE V 
+			WHERE Q.MQID=S.MQID AND S.MQID=V.MQID AND MID=#{mid} AND MQIMPORTANT=1
+				ORDER BY MQDATE DESC
+              		LIMIT #{startRow},#{pageSize}
+	</select>
+	<select id="getimportantQCnt" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM MYQBOOK Q, SOURCE_INFO S, VOCANOTE V 
+			WHERE Q.MQID=S.MQID AND S.MQID=V.MQID AND MID=#{mid} AND MQIMPORTANT=1				              	
+	</select>
+	<select id="getWord1" parameterType="String" resultType="WordCard">
+		select WORD1 as 'word', MEANING1 as 'meaning'
+			from VOCANOTE V, MYQBOOK M 
+				where mid=#{mid} and M.MQID=V.MQID
+	</select>
+	<select id="getWord2" parameterType="String" resultType="WordCard">
+		select WORD2 as 'word', MEANING2 as 'meaning'
+			from VOCANOTE V, MYQBOOK M 
+				where mid=#{mid} and M.MQID=V.MQID
+	</select>
+	<select id="getWord3" parameterType="String" resultType="WordCard">
+		select WORD3 as 'word', MEANING3 as 'meaning'
+			from VOCANOTE V, MYQBOOK M 
+				where mid=#{mid} and M.MQID=V.MQID
+	</select>
+	<select id="getWord4" parameterType="String" resultType="WordCard">
+		select PHRASE as 'word', MEANING4 as 'meaning'
+			from VOCANOTE V, MYQBOOK M 
+				where mid=#{mid} and M.MQID=V.MQID
+	</select>
+	
+</mapper>

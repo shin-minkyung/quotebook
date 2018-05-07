@@ -1,0 +1,13 @@
+@charset "UTF-8";
+.paging{
+	position:relative;
+	top:30px;
+	width:450px;
+}
+.paging ul{
+	clear:both;
+	width:fit-content;
+}
+.paging li{
+	margin:0px;
+}

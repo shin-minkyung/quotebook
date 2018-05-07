@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Alarm">
+	<select id="getmyAlarm" parameterType="String" resultType="Alarm">
+		select * from ALARM where mid=#{mid} and alchk=0 order by aldate desc
+	</select>
+	<insert id="insertPBalarm" parameterType="Alarm">
+		insert into ALARM values (last_insert_id(alid),#{mid},#{myid},#{chkid},#{chkname},#{chkphoto},'PBID','PBCID',null,default,default)
+	</insert>
+	<insert id="insertPBCalarm" parameterType="Alarm">
+		insert into ALARM values (last_insert_id(alid),#{mid},#{myid},#{chkid},#{chkname},#{chkphoto},'PBCID','PBCID',null,default,default)
+	</insert>
+	<insert id="insertHeartalarm" parameterType="Alarm">
+		insert into ALARM values (last_insert_id(alid),#{mid},#{myid},#{chkid},#{chkname},#{chkphoto},'PBCID','PBID',#{almsg},default,default)
+	</insert>
+	<insert id="insertAlarm" parameterType="Alarm">
+		insert into ALARM values (last_insert_id(alid),#{mid},#{myid},#{chkid},#{chkname},#{chkphoto},#{myidtype},#{chkidtype},#{almsg},default,default)
+	</insert>
+	<update id="checkAlarm" parameterType="int">
+		update ALARM set alchk=1 where alid=#{alid}
+	</update>
+	<select id="getAlarmCnt" parameterType="String" resultType="int">
+		select count(*) from ALARM A, MEMBERS M where A.mid=#{mid} and alchk=0 and A.mid=M.mid and chkname!=M.mname
+	</select>
+	<select id="getmyAlarmHistory" parameterType="Alarm" resultType="Alarm">
+		select * from ALARM 
+			where mid=#{mid} order by aldate desc
+				limit #{startRow},#{pageSize}
+	</select>
+	<select id="getAlarmHistoryCnt" parameterType="String" resultType="int">
+		select count(*) from ALARM A, MEMBERS M where A.mid=#{mid} and A.mid=M.mid and chkname!=M.mname
+	</select>
+</mapper>

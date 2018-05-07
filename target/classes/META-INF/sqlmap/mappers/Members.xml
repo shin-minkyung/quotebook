@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Members">
+	<resultMap type="Members" id="MembersResult">
+		<result column="mid" property="mid"></result>
+		<result column="mname" property="mname"/>
+		<result column="mpw" property="mpw"/>
+		<result column="mdate" property="mdate"/>
+		<result column="aboutme" property="aboutme"/>
+		<result column="mlevel" property="mlevel"/>
+		<result column="mpoint" property="mpoint"/>
+		<result column="mdrop" property="mdrop"></result>
+		<result column="melimi" property="melimi"/>		
+	</resultMap>
+	<select id="getMember1" parameterType="String" resultType="Members">
+		SELECT * FROM MEMBERS WHERE MID=#{mid}
+	</select>
+	<select id="getMember2" parameterType="String" resultType="Members">
+		SELECT MID, MNAME, MPW, MDATE, MPHOTO, ABOUTME, L.MLEVEL, M.MPOINT, MLLOWP, MLHIGHP, MLNAME 
+			FROM MEMBERS M, MLEVEL L 
+				WHERE MPOINT BETWEEN MLLOWP AND MLHIGHP AND MID=#{mid}		
+	</select>
+	<select id="idChk" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM MEMBERS WHERE MID=#{mid}
+	</select>
+	<select id="nameChk" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM MEMBERS WHERE MNAME=#{mName}
+	</select>
+	<select id="getMemberProgress" parameterType="String" resultType="Members">
+		SELECT M.*, MLNAME, MLHIGHP FROM MEMBERS M, MLEVEL L WHERE M.MLEVEL=L.MLEVEL AND MID=#{mid}
+	</select>
+	<insert id="insertMember" parameterType="Members">
+		INSERT INTO MEMBERS VALUES(#{mid}, #{mname}, #{mpw}, DEFAULT,
+		<if test="mphoto!=null || mphoto!=''">
+		  #{mphoto},
+		</if> 
+		<if test="mphoto==null || mphoto==''">
+		  DEFAULT,
+		</if>
+		<if test="aboutme!=''">
+		  #{aboutme},
+		</if> 
+		<if test="aboutme==''">
+		  DEFAULT,
+		</if>
+		DEFAULT, DEFAULT, DEFAULT, DEFAULT)
+	</insert>
+	<update id="pointUp" parameterType="Members">
+		UPDATE MEMBERS SET MPOINT=MPOINT+#{mpoint} WHERE MID=#{mid}
+	</update>
+	<select id="getmyLevelInfo" parameterType="String" resultType="Members">
+		SELECT MID, L.MLEVEL, MPOINT, MLLOWP, MLHIGHP, MLNAME FROM MEMBERS M, MLEVEL L WHERE MPOINT BETWEEN MLLOWP AND MLHIGHP AND MID=#{mid}
+	</select>
+	<insert id="testUpload" parameterType="String">
+		insert into TESTUP values(#{fname})
+	</insert>
+	<update id="updateMphotoAboutme" parameterType="Members">
+		update MEMBERS set mphoto=#{mphoto}, aboutme=#{aboutme} where mid=#{mid}
+	</update>	
+	<update id="updateMphoto" parameterType="Members">
+		update MEMBERS set mphoto=#{mphoto} where mid=#{mid}
+	</update>
+	<update id="updateAboutme" parameterType="Members">
+		update MEMBERS set aboutme=#{aboutme} where mid=#{mid}
+	</update>
+	<update id="updateMpw" parameterType="Members">
+		update MEMBERS set mpw=#{mpw} where mid=#{mid}
+	</update>
+	<update id="updateMdrop" parameterType="String">
+		update MEMBERS set mdrop=1 where mid=#{mid}
+	</update>
+	<update id="updateProfileHide" parameterType="String">
+		update MEMBERS set MLEVEL=0 where mid=#{mid}
+	</update>
+	<update id="updateProfileShow" parameterType="String">
+		update MEMBERS set MLEVEL=1 where mid=#{mid}
+	</update>
+	<select id="getDrop" parameterType="String" resultType="int">
+	 	select mdrop from MEMBERS where mid=#{mid}
+	</select>
+	<update id="setPoint0" parameterType="String">
+		update MEMBERS set MPOINT=0 where mid=#{mid}
+	</update>
+</mapper>

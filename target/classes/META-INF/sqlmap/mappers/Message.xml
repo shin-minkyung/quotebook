@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Message">
+	<insert id="insertMsg" parameterType="Message">
+		insert into MESSAGE values(last_insert_id(msgid), #{msgcontent}, default, default, #{msgfrom}, #{msgto}, default)
+	</insert>
+	<select id="getMsgIgot" parameterType="Message" resultType="Message">
+		select MSG.*, MNAME, MPHOTO from MESSAGE MSG, MEMBERS M
+			where msgto =#{msgto} and MSG.msgfrom=M.MID
+				order by msgdate desc limit #{startRow},3
+	</select>
+	<select id="getMsgIsent" parameterType="Message" resultType="Message">
+		select MSG.*, MNAME, MPHOTO from MESSAGE MSG, MEMBERS M 
+			where msgfrom =#{msgfrom} and MSG.msgto=M.MID
+				order by msgdate desc limit #{startRow},3
+	</select>
+	<update id="deleteMsg" parameterType="int">
+		update MESSAGE set msgdel=1 where msgid=#{msgid}
+	</update>	
+	<select id="getMsgIgotCnt" parameterType="String" resultType="int">
+		select count(*) from MESSAGE where msgto =#{msgto}
+	</select>
+	<select id="getMsgIsentCnt" parameterType="String" resultType="int">
+		select count(*) from MESSAGE where msgfrom =#{msgfrom}
+	</select>
+	<select id="theMsgIgot" parameterType="int" resultType="Message">
+		select MSG.*,MNAME, MPHOTO from MESSAGE MSG, MEMBERS M
+			where msgid=#{msgid} and MSG.msgfrom=M.MID
+	</select>
+	<select id="theMsgIsent" parameterType="int" resultType="Message">
+		select MSG.*,MNAME, MPHOTO from MESSAGE MSG, MEMBERS M
+			where msgid=#{msgid} and MSG.msgto=M.MID
+	</select>
+	<update id="msgChecked" parameterType="int">
+		update MESSAGE set msgchk=1 where msgid=#{msgid}
+	</update>
+	<select id="getMaxMsgid" resultType="int">
+		select max(msgid) from MESSAGE
+	</select>
+</mapper>

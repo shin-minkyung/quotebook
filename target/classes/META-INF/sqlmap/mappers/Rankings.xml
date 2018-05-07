@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Rankings">
+<select id="top5members" resultType="Rankings">
+	SELECT MID, MNAME, L.MLEVEL, MLNAME, MPOINT,MPHOTO FROM MEMBERS M, MLEVEL L 
+	WHERE MPOINT BETWEEN MLLOWP AND MLHIGHP AND MDROP=0
+		ORDER BY MPOINT DESC, MDATE
+			LIMIT 0,5
+</select>
+<select id="getmyHeartCnt" parameterType="String" resultType="int">
+	select count(*) from PBCOMMENT where mid=#{mid} and heart=1
+</select>
+</mapper>

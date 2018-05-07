@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PBComment">
+	<select id="getComments" parameterType="int" resultType="PBComment">
+	  SELECT*FROM PBCOMMENT WHERE PBID =#{pbid} order by CGROUP, CDATE
+	</select>
+	<select id="getCommentCnt" parameterType="int" resultType="int">
+	   SELECT COUNT(*) FROM PBCOMMENT WHERE PBID=#{pbid} AND CDEL=0
+	</select>
+	<insert id="insertStep0" parameterType="PBComment">
+		insert into PBCOMMENT 
+		  (PBID,MID, MNAME, MPHOTO,PBCCONTENT,CGROUP, CINDENT, RCID)
+			select #{pbid}, #{mid},#{mname},#{mphoto},#{pbccontent},max(pbcid)+1, 0, null
+    			from PBCOMMENT
+	</insert>
+	<insert id="insertStep1" parameterType="PBComment">
+		insert into PBCOMMENT 
+		  (PBID,MID, MNAME, MPHOTO,PBCCONTENT,CGROUP, CINDENT, RCID)
+			values(#{pbid}, #{mid},#{mname},#{mphoto},#{pbccontent},#{cgroup}, 1, #{rcid})			
+	</insert>	
+	<update id="modifyComment" parameterType="PBComment">
+		update PBCOMMENT set PBCCONTENT=#{pbccontent} where pbcid=#{pbcid}
+	</update>
+	<select id="ifhasReply" parameterType="int" resultType="int">
+		select count(*) from PBCOMMENT where CGROUP=#{pbcid} and CDEL=0
+	</select>	
+	<update id="deleteComment" parameterType="int">
+		update PBCOMMENT set CDEL=1 where PBCID=#{pbcid}
+	</update>
+	<select id="toWhom" parameterType="int" resultType="String">
+		select pbc1.mname from PBCOMMENT pbc1, PBCOMMENT pbc2 where pbc1.pbcid=pbc2.rcid and pbc2.pbcid=#{pbcid}
+	</select>
+	<update id="giveHeart" parameterType="int">
+		UPDATE PBCOMMENT SET HEART=1 WHERE PBCID=#{pbcid}
+	</update>
+	<update id="takeHeart" parameterType="int">
+		UPDATE PBCOMMENT SET HEART=0 WHERE PBCID=#{pbcid}
+	</update>
+	<select id="getHeartCnt" parameterType="int" resultType="int">
+		select count(*) from PBCOMMENT where pbid=#{pbid} and heart=1
+	</select>
+	<select id="getCommentWriter" parameterType="int" resultType="String">
+		select mid from PBCOMMENT where pbcid=#{pbcid}
+	</select>	
+	<select id="getmyComments" parameterType="PublicQBook" resultType="PBComment">
+		SELECT * FROM PBCOMMENT WHERE MID=#{mid} order by cdate desc limit #{startRow}, 5
+	</select>
+	<select id="getmyheartComments" parameterType="PublicQBook" resultType="PBComment">
+		SELECT * FROM PBCOMMENT WHERE MID=#{mid} and heart=1 order by cdate desc limit #{startRow}, 5
+	</select>
+	<select id="getMaxPbcid" resultType="int">
+		select max(pbcid) from PBCOMMENT
+	</select>
+	<select id="getComment" parameterType="int" resultType="PBComment">
+		select * from PBCOMMENT where pbcid=#{pbcid}
+	</select>
+</mapper>
