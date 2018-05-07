@@ -1,6 +1,8 @@
 # quotebook 소개
 외국어 학습자들이 원하는 문장을 출처와 함께 기록해두는 웹서비스입니다
 <!-- ![Alt text](http://nightsky.cafe24.com/img/1_ko.png) -->
+# quotebook 웹링크
+http://quotebook.ga
 
 # 개발환경
 * JSP = HTML+ CSS3 + JQUERY 
@@ -79,7 +81,9 @@
 
 # 가입방법
 * quotebook은 가입시 이메일, 비밀번호, 닉네임, 프로필 사진, 자기소개만 수집합니다.
-* 이메일, 비밀번호, 닉네임만이 필수항목이며 이메일은 유효성 검사를 거친 이메일을 사용할 수 있습니다.
-
+* 이메일, 비밀번호, 닉네임만이 필수항목입니다
+* 유효성 검사를 거친 이메일 사용할 수 있습니다.
 ![Alt text](http://nightsky.cafe24.com/img/14_ko.png)
 <!-- ![Alt text](http://nightsky.cafe24.com/img/15_ko.png)-->
+
+
