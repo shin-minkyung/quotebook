@@ -38,7 +38,7 @@
  
   ![Alt text](http://nightsky.cafe24.com/img/5_ko.png)
   ![Alt text](http://nightsky.cafe24.com/img/6_ko.png)
-  ![Alt text](http://nightsky.cafe24.com/img/7_ko.png)
+  <!-- ![Alt text](http://nightsky.cafe24.com/img/7_ko.png) -->
   
  > ## 기능3 문장으로 질문하기 
  * 등록한 문장으로 질문글을 게시할 수 있습니다
